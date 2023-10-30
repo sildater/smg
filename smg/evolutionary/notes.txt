@@ -1,0 +1,138 @@
+
+
+chord_for_melody_
+
+class Optimizer
+    modify
+
+        for some elems: for some chords: accidental
+        for some elems: for some chords: invert
+        for some elems: for some chords: recombine
+
+    fitness:
+        penalize chord leaps (what distance)
+        penalize scale changes
+        penalize small root changes
+        penalize sticking on a root
+        ---
+        penalize distance from melody
+
+    select:
+        pick n of highest fitness (lowest penalty)
+
+    run:
+        first some euclidean rhythm finding
+            and and processing from played melody
+        optimization loop
+        
+
+*** = change from Optimizer
+class Optimizer2
+    modify
+
+        for some elems: for some chords: accidental
+        for some elems: for some chords: invert
+        for some elems: for some chords: change root ***
+        *** no joining
+
+    fitness: 
+        penalize chord leaps (what distance)
+        penalize scale changes
+        penalize small root changes
+        penalize sticking on a root
+        ---
+        penalize distance from melody
+
+    select:
+        pick n of highest fitness (lowest penalty)
+
+    run:
+        first some euclidean rhythm finding
+            and and processing from played melody
+        optimization loop
+        returns: chords + rhythm
+
+
+test_evol_loivy.py
+
+    show -> print chord
+    note2note_array -> create note_array from list of midi notes
+    rec - > record? + note2note_array
+    recompute ->    
+        start a new optimizer with a given note_array
+        create a part from result 
+    st -> start a sequencer
+
+
+Chords:
+    any offset
+    any scale
+    how many 
+    root_id
+    can invert
+
+
+
+new evol
+------------------------------------------------------------------
+    diatonic, within key
+    triads
+    4 notes (one doubled 1 or 5, not 3)
+    root in bass
+    distance s-a, t-a <= octave // t-b < 2 octave
+    position = soprano level 1,3,5
+
+    how many such chords are there?
+
+    position 1: soprano in C
+
+    C1 - E2 - G2 - C3 
+
+    10 - 3 - 4
+    3 - 3 - 4
+    13 - 6 - 6
+    5 - 6 - 6
+
+    * 6 - 5 - 4
+    * 14 - 5 - 4
+    * 3 - 4 - 8
+    * 10 - 4 - 8
+    * 3 - 8 - 4 (5 doubled)
+    * 10 - 8 - 4 (5 doubled)
+
+
+    position 2: soprano in G
+
+    8 - 3 - 3
+    0 - 3 - 3
+    5 - 6 - 3 (5 doubled)
+    13 - 6 - 3 (5 doubled)
+    3 - 6 - 5
+    10 - 6 - 5
+    3 - 3 - 8 (5 doubled)
+    10 - 3 - 8 (5 doubled)
+
+    * 6 - 8 - 5
+    * 14 - 8 - 5 
+    * 3 - 4 - 5 (5 doubled)
+    * 10 - 4 - 5 (5 doubled)
+    * 6 - 5 - 8 (5 doubled)
+    * 14 - 5 - 8 (5 doubled)
+
+    position 3: soprano in E
+
+    0 - 5 - 6 
+    8 - 5 - 6
+    5 - 4 - 3
+    13 - 4 - 3
+
+    5 - 8 - 6 (5 doubled)
+    13 - 8 - 6 (5 doubled) 
+
+    * no 6 inversions because 3 doubling
+
+
+    given one voice (and which it is) and a key, write parts
+
+
+
