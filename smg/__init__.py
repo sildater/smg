@@ -4,7 +4,7 @@
 The top level of the package.
 """
 import pkg_resources
-EXAMPLE = pkg_resources.resource_filename("paow", 
+EXAMPLE = pkg_resources.resource_filename("smg", 
                                           "assets/dummy.txt")
 
 

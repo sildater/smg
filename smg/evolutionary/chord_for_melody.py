@@ -1,8 +1,8 @@
 
 import numpy as np
 import partitura as pt
-from paow.utils import Chord, Progression, FourPartProgression, euclidean
-from paow.utils import (cycle_distance, chordDistance, parttimefromrekorder,
+from smg.utils import Chord, Progression, FourPartProgression, euclidean
+from smg.utils import (cycle_distance, chordDistance, parttimefromrekorder,
                         partFromFourPartProgression)
 
 class Optimizer:
