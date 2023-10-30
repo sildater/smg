@@ -211,36 +211,36 @@ chord_types = {
     # position 1: soprano in C
     "a":(10,3,4),
     "b":(3,3,4),
-    "c":(13,6,6),
+    "c":(12,6,6),
     "d":(5,6,6),
-    "e":(6,5,4), # 6
-    "f":(14,5,4), # 6
-    "g":(3,4,8), # 6
-    "h":(10,4,8), # 6
-    "i":(3,8,4), # 6 (5 doubled)
-    "j":(10,8,4), # 6 (5 doubled)
+    # "e":(6,5,4), # 6
+    # "f":(14,5,4), # 6
+    # "g":(3,4,8), # 6
+    # "h":(10,4,8), # 6
+    # "i":(3,8,4), # 6 (5 doubled)
+    # "j":(10,8,4), # 6 (5 doubled)
     # position 2: soprano in G
     "k":(8,3,3),
-    "l":(0,3,3),
+    "l":(1,3,3),
     "m":(5,6,3), #(5 doubled)
-    "n":(13,6,3), #(5 doubled)
+    "n":(12,6,3), #(5 doubled)
     "o":(3,6,5),
     "p":(10,6,5),
     "q":(3,3,8), # (5 doubled)
     "r":(10,3,8), # (5 doubled)
-    "s":(6,8,5), # 6
-    "t":(14,8,5), # 6 
-    "u":(3,4,5), # 6 (5 doubled)
-    "v":(10,4,5), # 6 (5 doubled)
-    "w":(6,5,8), # 6 (5 doubled)
-    "x":(14,5,8), # 6 (5 doubled)
+    # "s":(6,8,5), # 6
+    # "t":(14,8,5), # 6 
+    # "u":(3,4,5), # 6 (5 doubled)
+    # "v":(10,4,5), # 6 (5 doubled)
+    # "w":(6,5,8), # 6 (5 doubled)
+    # "x":(14,5,8), # 6 (5 doubled)
     # position 3: soprano in E
-    "y":(0,5,6), 
+    "y":(1,5,6), 
     "z":(8,5,6),
     "ö":(5,4,3),
-    "ü":(13,4,3),
+    "ü":(12,4,3),
     "ä":(5,8,6), # (5 doubled)
-    ".":(13,8,6), # (5 doubled) 
+    ".":(12,8,6), # (5 doubled) 
 }
 
 
@@ -277,6 +277,7 @@ class FourPartChord:
         self.tenor = None
         self.bass = None
         self.pitch_computed = False
+        self.id = randomword(4)
         
     def compute_pitch(self,
                       given_pitch, # midi pitch of given melody
@@ -315,34 +316,34 @@ class FourPartProgression:
     the Progression class representing a sequence of chords
     """
     def __init__(self,
-                 chords = None,
+                 c_type_sample = None,
                  number_of_chords = 8, 
                  offset = 48,
                  scale = np.array([0,2,4,5,7,9,11])):
         
         self.c_types = list(chord_types.keys())
-        if chords is not None:
-            self.chords = chords
+        if c_type_sample is not None:
+            self.c_type_sample = np.random.choice(self.c_types, number_of_chords)
         else:
-            c_type_sample = np.random.choice(self.c_types, number_of_chords)
-            self.chords = [FourPartChord(c_type_sample[c], offset = offset, scale = scale) for c in range(number_of_chords)]
+            self.c_type_sample = np.random.choice(self.c_types, number_of_chords)
+        self.chords = [FourPartChord(self.c_type_sample[c], offset = offset, scale = scale) for c in range(number_of_chords)]
         self.number_of_chords = number_of_chords
         self.id = randomword(10)
     
     def copy(self):
         return FourPartProgression(number_of_chords = self.number_of_chords,
-                                   chords= self.chords)
+                                   c_type_sample = self.c_type_sample)
     
     def set_voice(self, melody, voice):
         for cidx, melody_pitch in enumerate(melody):
             self.chords[cidx].compute_pitch(melody_pitch, voice)
 
-    def point_mutate(self, 
-              idx = None):
-        
+    def point_mutate(self, idx = None, c_type_sample = None):   
         if idx is None:
             idx = np.random.randint(0,self.number_of_chords)
-        c_type_sample = np.random.choice(self.c_types, 1)
+        if c_type_sample is None:
+            c_type_sample = np.random.choice(self.c_types, 1)
+        self.c_type_sample[idx] = c_type_sample[0]
         self.chords[idx] = FourPartChord(c_type_sample[0])
         
     def join(self, 
@@ -371,5 +372,6 @@ class FourPartProgression:
 
 if __name__ == "__main__":
 
-    a = Chord(how_many = 3, root_id = 0)
+    # a = Chord(how_many = 3, root_id = 0)
 
+    a = FourPartProgression()
