@@ -243,5 +243,34 @@ if __name__ == "__main__":
     #### REALTIME EVOL MIDI FX
 
     effect = FourPartOptimizerLocalMidiFX()
-    mfx = MidiFX("AE-30", "ealive", "MPK", fx = effect)
+    mfx = MidiFX("AE-30", "iM", "MPK", fx = effect)
     mfx.start()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
