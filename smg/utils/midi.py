@@ -400,7 +400,6 @@ class MidiSyncSender(multiprocessing.Process):
                  *args, **kwargs):
         super(MidiSyncSender, self).__init__(*args, **kwargs)
         self.outport_name = outport_name
-        self.router = MidiRouter(outport_name = self.outport_name)        
         self.queue = queue
         self.playing = False    
         self.update_time = self.set_time(tempo)
@@ -410,11 +409,13 @@ class MidiSyncSender(multiprocessing.Process):
         self.sync_msg = mido.Message.from_bytes([0xF8])
         self.stop_msg = mido.Message.from_bytes([0xFC])
 
-    def reset(self):
+    def reset(self):    
         self.counter = 0
         self.playing = False
         self.current_time = time.perf_counter_ns()
         self.playnext = time.perf_counter_ns()
+        self.router = None
+
 
     def set_time(self, tempo_in_bpm):
         seconds_per_beat = 60/tempo_in_bpm
@@ -428,12 +429,13 @@ class MidiSyncSender(multiprocessing.Process):
         self.queue.put(args)
 
     def run(self):
-
         self.sendMIDISYNC()
 
     def sendMIDISYNC(self):     
         self.reset()
         self.playing = True
+        # midirouter here avoids error "Python Multiprocessing - cannot pickle '_thread.lock' object"
+        self.router = MidiRouter(outport_name = self.outport_name)    
         self.router.output_port.send(self.start_msg)
             
         while self.playing:
@@ -469,9 +471,70 @@ class MidiSyncSender(multiprocessing.Process):
         self.terminate()
         self.join()
 
+class MidiFX(multiprocessing.Process):
+    def __init__(self, 
+                 inport_name,
+                 outport_name,
+                 secondary_inport_name,
+                 fx = None,
+                 *args, **kwargs):
+        super(MidiFX, self).__init__(*args, **kwargs)
+        self.outport_name = outport_name
+        self.inport_name = inport_name
+        self.secondary_inport_name = secondary_inport_name
+        self.router = None
+        if fx is not None:
+            self.fx = fx       
+        else:
+            self.fx = self.default_fx
+        self.playing = False    
+
+    def default_fx(self, msg):
+        print("in fx: ", msg)
+        return [msg]
+
+    def run(self):
+        self.midiFX()
+
+    def midiFX(self): 
+        self.router = MidiRouter(inport_name = self.inport_name,
+                                 outport_name = self.outport_name) 
+        self.secondary_router = MidiRouter(inport_name = self.secondary_inport_name) 
+    
+        self.playing = True 
+        while self.playing:
+            try:
+                for msg in self.router.input_port.iter_pending():
+                    if not msg.is_cc():
+                        out_msgs = self.fx(msg)
+                        for out_msg in out_msgs:
+                            self.router.output_port.send(out_msg) 
+                for msg in self.secondary_router.input_port.iter_pending():
+                    # if msg.is_cc():
+                        # only for cc's
+                    out_msgs = self.fx(msg, True)
+                    # for out_msg in out_msgs:
+                    #     self.router.output_port.send(out_msg) 
+       
+                time.sleep(1e-6)
+            
+            except KeyboardInterrupt:
+                self.stop()
+                break
+
+    def stop(self):
+        self.playing = False
+        self.router.panic()
+        self.router.close_ports()
+        self.terminate()
+        self.join()
 
 
 if __name__ == "__main__":
+
+
+    #### MIDI SEQUENCER
+
     # part = pt.load_musicxml(pt.EXAMPLE_MUSICXML)[0]
     # queue =multiprocessing.Queue()
     # s = Sequencer(queue=queue,
@@ -480,10 +543,17 @@ if __name__ == "__main__":
     # time.sleep(2)
     # s.up(part)
 
-    # # time.sleep(4)
-    # # s.terminate()
-    # # s.join()
+    # time.sleep(4)
+    # s.terminate()
+    # s.join()
 
-    queue = multiprocessing.Queue()
-    mss = MidiSyncSender("seq", queue, 100)
-    mss.start()
+    #### MIDI SYNC
+
+    # queue = multiprocessing.Queue()
+    # mss = MidiSyncSender("seq", queue, 100)
+    # mss.start()
+
+    #### MIDI FX
+
+    mfx = MidiFX("MPK", "MPK")
+    mfx.start()

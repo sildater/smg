@@ -213,12 +213,12 @@ chord_types = {
     "b":(3,3,4),
     "c":(12,6,6),
     "d":(5,6,6),
-    # "e":(6,5,4), # 6
-    # "f":(14,5,4), # 6
-    # "g":(3,4,8), # 6
-    # "h":(10,4,8), # 6
-    # "i":(3,8,4), # 6 (5 doubled)
-    # "j":(10,8,4), # 6 (5 doubled)
+    "e":(6,5,4), # 6
+    "f":(14,5,4), # 6
+    "g":(3,4,8), # 6
+    "h":(10,4,8), # 6
+    "i":(3,8,4), # 6 (5 doubled)
+    "j":(10,8,4), # 6 (5 doubled)
     # position 2: soprano in G
     "k":(8,3,3),
     "l":(1,3,3),
@@ -228,12 +228,12 @@ chord_types = {
     "p":(10,6,5),
     "q":(3,3,8), # (5 doubled)
     "r":(10,3,8), # (5 doubled)
-    # "s":(6,8,5), # 6
-    # "t":(14,8,5), # 6 
-    # "u":(3,4,5), # 6 (5 doubled)
-    # "v":(10,4,5), # 6 (5 doubled)
-    # "w":(6,5,8), # 6 (5 doubled)
-    # "x":(14,5,8), # 6 (5 doubled)
+    "s":(6,8,5), # 6
+    "t":(14,8,5), # 6 
+    "u":(3,4,5), # 6 (5 doubled)
+    "v":(10,4,5), # 6 (5 doubled)
+    "w":(6,5,8), # 6 (5 doubled)
+    "x":(14,5,8), # 6 (5 doubled)
     # position 3: soprano in E
     "y":(1,5,6), 
     "z":(8,5,6),
@@ -270,7 +270,7 @@ class FourPartChord:
         self.scale = scale
         lowest_offset = offset % 12
         self.whole_scale = np.concatenate([self.scale + lowest_offset + 12 * octave  
-                                           for octave in np.arange(10)])
+                                           for octave in np.arange(20)])
         self.intervals = chord_types[self.chord_type]
         self.soprano = None
         self.alto = None
@@ -322,11 +322,12 @@ class FourPartProgression:
                  scale = np.array([0,2,4,5,7,9,11])):
         
         self.c_types = list(chord_types.keys())
+        self.offset = offset
         if c_type_sample is not None:
             self.c_type_sample = np.random.choice(self.c_types, number_of_chords)
         else:
-            self.c_type_sample = np.random.choice(self.c_types, number_of_chords)
-        self.chords = [FourPartChord(self.c_type_sample[c], offset = offset, scale = scale) for c in range(number_of_chords)]
+            self.c_type_sample = np.random.choice(self.c_types, number_of_chords) ###########################################
+        self.chords = [FourPartChord(self.c_type_sample[c], offset = self.offset, scale = scale) for c in range(number_of_chords)]
         self.number_of_chords = number_of_chords
         self.id = randomword(10)
     
@@ -344,7 +345,7 @@ class FourPartProgression:
         if c_type_sample is None:
             c_type_sample = np.random.choice(self.c_types, 1)
         self.c_type_sample[idx] = c_type_sample[0]
-        self.chords[idx] = FourPartChord(c_type_sample[0])
+        self.chords[idx] = FourPartChord(c_type_sample[0], offset =  self.offset)
         
     def join(self, 
              another,

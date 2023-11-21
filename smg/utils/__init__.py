@@ -6,7 +6,7 @@ This module contains utility functions for the paow package.
 """
 
 
-from .midi import (MidiRouter, Sequencer, MidiInputThread)
+from .midi import (MidiRouter, Sequencer, MidiInputThread, MidiFX)
 from .rhythm import (euclidean)
 from .pitch import (Chord, Progression, 
                     FourPartChord, FourPartProgression, chord_types, 

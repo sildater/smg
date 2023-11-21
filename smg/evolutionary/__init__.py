@@ -4,4 +4,5 @@
 This module contains evolutionary algorithms for music generation.
 """
 
-from .chord_for_melody import Optimizer, Optimizer2
+from .static_optimizers import Optimizer, Optimizer2
+from .dynamic_optimizers import FourPartOptimizerLocalMidiFX
