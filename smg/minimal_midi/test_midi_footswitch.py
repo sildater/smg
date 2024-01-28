@@ -5,7 +5,7 @@ test the message produced by the foot switch on the mpkmini.
 
 print(mido.get_output_names(), mido.get_input_names())
 
-iport  = mido.open_input('MPKmini2 1')
+iport  = mido.open_input('MPKmini2 2')
     
 def g():
     for msg in iport:
