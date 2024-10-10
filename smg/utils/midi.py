@@ -506,8 +506,10 @@ class MidiFX(multiprocessing.Process):
             try:
                 for msg in self.router.input_port.iter_pending():
                     if not msg.is_cc():
+                        print("INPUT::::", msg)
                         out_msgs = self.fx(msg)
                         for out_msg in out_msgs:
+                            print("OUTPUT:::", out_msg)
                             self.router.output_port.send(out_msg) 
                 for msg in self.secondary_router.input_port.iter_pending():
                     # if msg.is_cc():

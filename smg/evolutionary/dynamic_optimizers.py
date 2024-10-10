@@ -137,7 +137,6 @@ class FourPartOptimizerLocalMidiFX:
     def __call__(self, msg, secondary = False):
         out_msgs = []
         if msg.type == "note_on":
-            print(msg)
             new_pitch = self.scalify(msg.note)
             
             new_vel = msg.velocity
@@ -176,10 +175,9 @@ class FourPartOptimizerLocalMidiFX:
             self.progression.point_mutate(0, ctype_next_optimal)
 
         elif msg.type == "note_off":
-            print(msg)
             new_pitch = self.scalify(msg.note)
             if len(self.out_pitches_by_in_pitch[new_pitch]) > 0:
-                off_pitches = self.out_pitches_by_in_pitch[new_pitch]
+                off_pitches = self.out_pitches_by_in_pitch.pop(new_pitch)
             else:
                 off_pitches = self.out_pitches
 
@@ -243,7 +241,8 @@ if __name__ == "__main__":
     #### REALTIME EVOL MIDI FX
 
     effect = FourPartOptimizerLocalMidiFX()
-    mfx = MidiFX("AE-30", "iM", "MPK", fx = effect)
+    mfx = MidiFX("iM", "iM", "MPK", fx = effect)
+    # mfx = MidiFX("Clavi", "Clavi", "MPK", fx = effect)
     mfx.start()
 
 

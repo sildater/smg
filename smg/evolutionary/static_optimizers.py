@@ -125,7 +125,6 @@ class Optimizer:
         self.population = population
         return self.population, rhythm
 
-
 class Optimizer2:
     def __init__(self):
         pass    
