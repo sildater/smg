@@ -477,11 +477,13 @@ class MidiFX(multiprocessing.Process):
                  outport_name,
                  secondary_inport_name,
                  fx = None,
+                 verbose = False,
                  *args, **kwargs):
         super(MidiFX, self).__init__(*args, **kwargs)
         self.outport_name = outport_name
         self.inport_name = inport_name
         self.secondary_inport_name = secondary_inport_name
+        self.verbose = verbose
         self.router = None
         if fx is not None:
             self.fx = fx       
@@ -496,7 +498,7 @@ class MidiFX(multiprocessing.Process):
     def run(self):
         self.midiFX()
 
-    def midiFX(self, verbose = False): 
+    def midiFX(self): 
         self.router = MidiRouter(inport_name = self.inport_name,
                                  outport_name = self.outport_name) 
         self.secondary_router = MidiRouter(inport_name = self.secondary_inport_name) 
@@ -506,11 +508,11 @@ class MidiFX(multiprocessing.Process):
             try:
                 for msg in self.router.input_port.iter_pending():
                     if not msg.is_cc():
-                        if verbose:
+                        if self.verbose:
                             print("INPUT::::", msg)
                         out_msgs = self.fx(msg)
                         for out_msg in out_msgs:
-                            if verbose:
+                            if self.verbose:
                                 print("OUTPUT:::", out_msg)
                             self.router.output_port.send(out_msg) 
                 for msg in self.secondary_router.input_port.iter_pending():

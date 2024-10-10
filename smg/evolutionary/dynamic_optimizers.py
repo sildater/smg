@@ -100,7 +100,7 @@ class FourPartOptimizerLocalMidiFX:
         self.out_messages = list()
         self.out_messages_off = list()
         self.send_msg = True
-        self.send_input_melody_note = True
+        self.send_input_melody_note = False
         print("optimizer ready")
 
     def scalify(self, input_array, 
@@ -163,6 +163,9 @@ class FourPartOptimizerLocalMidiFX:
                 self.progression.chords[1].tenor[0],
                 self.progression.chords[1].bass[0]
                 ]
+            
+            if not self.send_input_melody_note:
+                del self.out_pitches[self.voice]
 
             # use this for note off
             self.out_pitches_by_in_pitch[new_pitch] += self.out_pitches 
@@ -244,7 +247,7 @@ if __name__ == "__main__":
     #### REALTIME EVOL MIDI FX
 
     effect = FourPartOptimizerLocalMidiFX()
-    mfx = MidiFX("iM", "iM", "MPK", fx = effect)
+    mfx = MidiFX("iM", "iM", "MPK", fx = effect, verbose = True)
     # mfx = MidiFX("Clavi", "Clavi", "MPK", fx = effect)
     mfx.start()
 
