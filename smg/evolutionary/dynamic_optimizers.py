@@ -83,7 +83,9 @@ class FourPartOptimizerLocal:
     
 
 class FourPartOptimizerLocalMidiFX:
-    def __init__(self, voice = 3, scale_offset = 3):
+    def __init__(self, 
+                 voice = 3, 
+                 scale_offset = 3):
         self.voice = voice
         self.scale_offset = scale_offset
         self.progression = FourPartProgression(number_of_chords = 2, offset = self.scale_offset)
@@ -98,6 +100,7 @@ class FourPartOptimizerLocalMidiFX:
         self.out_messages = list()
         self.out_messages_off = list()
         self.send_msg = True
+        self.send_input_melody_note = True
         print("optimizer ready")
 
     def scalify(self, input_array, 
